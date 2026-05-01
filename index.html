@@ -566,11 +566,19 @@ function submitOrder() {
   btn.textContent = 'Отправка...';
   btn.disabled = true;
 
+  const formData = new FormData();
+  formData.append('org', org);
+  formData.append('contact', contact);
+  formData.append('phone', phone);
+  formData.append('date', date);
+  formData.append('address', address);
+  formData.append('order', orderLines);
+  formData.append('notes', notes);
+
   fetch(SHEET_URL, {
     method: 'POST',
     mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ org, contact, phone, date, address, order: orderLines, notes })
+    body: formData
   })
   .then(() => {
     document.getElementById('form-view').style.display = 'none';
