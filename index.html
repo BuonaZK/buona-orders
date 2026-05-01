@@ -535,25 +535,57 @@ function upd() {
   document.getElementById('sv-total').textContent = total;
 }
 
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbznV5moiiJdjcM2hpR9gkTNLYD4lTSJGfidlMgePcvdZKYoXEWlf7DvKmyXzsiXeuzG/exec';
+
 function submitOrder() {
-  const org = document.getElementById('org').value.trim();
+  const org     = document.getElementById('org').value.trim();
   const contact = document.getElementById('contact').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const date = document.getElementById('date').value.trim();
+  const phone   = document.getElementById('phone').value.trim();
+  const date    = document.getElementById('date').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const notes   = document.getElementById('notes').value.trim();
+
   if (!org || !contact || !phone || !date) {
     alert('Пожалуйста, заполните все обязательные поля (*)');
     return;
   }
-  const hasItems = [...document.querySelectorAll('input[data-s]')].some(i => parseFloat(i.value) > 0);
+  const inputs = [...document.querySelectorAll('input[data-s]')];
+  const hasItems = inputs.some(i => parseFloat(i.value) > 0);
   if (!hasItems) {
     alert('Добавьте хотя бы один продукт');
     return;
   }
-  document.getElementById('form-view').style.display = 'none';
-  document.getElementById('success-view').style.display = 'block';
-  document.getElementById('success-msg').textContent =
-    `Заказ от "${org}" на ${date} принят. Мы свяжемся с вами по номеру ${phone}.`;
-  window.scrollTo(0, 0);
+
+  // Build order summary string
+  const orderLines = inputs
+    .filter(i => parseFloat(i.value) > 0)
+    .map(i => `${i.dataset.n}: ${i.value} ${i.dataset.u}`)
+    .join(' | ');
+
+  const btn = document.querySelector('.submit-btn');
+  btn.textContent = 'Отправка...';
+  btn.disabled = true;
+
+  fetch(SHEET_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ org, contact, phone, date, address, order: orderLines, notes })
+  })
+  .then(() => {
+    document.getElementById('form-view').style.display = 'none';
+    document.getElementById('success-view').style.display = 'block';
+    document.getElementById('success-msg').textContent =
+      `Заказ от "${org}" на ${date} принят. Мы свяжемся с вами по номеру ${phone}.`;
+    window.scrollTo(0, 0);
+  })
+  .catch(() => {
+    alert('Ошибка отправки. Проверьте интернет и попробуйте снова.');
+  })
+  .finally(() => {
+    btn.textContent = 'ОТПРАВИТЬ ЗАКАЗ';
+    btn.disabled = false;
+  });
 }
 
 function resetForm() {
