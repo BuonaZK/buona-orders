@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#CC0000">
+<title>БУОНА — Коммерческий заказ</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #CC0000;
+    --red-dark: #AA0000;
+    --gold: #8B7540;
+    --gold-light: #F9F3E8;
+    --gray: #F5F5F5;
+    --border: #E8E8E8;
+    --text: #1A1A1A;
+    --muted: #888;
+    --green: #2E7D32;
+    --blue: #1565C0;
+    --white: #FFFFFF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #F7F4F1;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--red);
+    color: white;
+    text-align: center;
+    padding: 6px 16px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  /* HEADER */
+  .header {
+    background: white;
+    border-bottom: 3px solid var(--red);
+    padding: 20px 16px 16px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .logo-text {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 4px;
+  }
+  .logo-sub {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+  .logo-tagline {
+    font-size: 11px;
+    color: var(--gold);
+    font-style: italic;
+    margin-top: 3px;
+  }
+
+  /* MAIN */
+  .main {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px 12px 40px;
+  }
+
+  /* CLIENT CARD */
+  .card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .card-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .field input, .field textarea {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #FAFAFA;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field input:focus, .field textarea:focus {
+    border-color: var(--red);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(204,0,0,0.06);
+  }
+  .field textarea { resize: vertical; min-height: 56px; }
+
+  /* SECTION */
+  .section {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .sec-header:hover { background: #FAFAFA; }
+  .sec-header.disabled { cursor: default; opacity: 0.5; }
+  .sec-header.disabled:hover { background: white; }
+  .sec-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .sec-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+  .sec-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: var(--gray);
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+  .sec-badge.has-items {
+    background: #FFEBEE;
+    color: var(--red);
+  }
+  .sec-badge.soon {
+    background: #FFF8E1;
+    color: #F57F17;
+  }
+  .chevron {
+    font-size: 10px;
+    color: var(--muted);
+    transition: transform 0.2s;
+    width: 14px;
+    text-align: center;
+  }
+  .chevron.open { transform: rotate(180deg); }
+
+  .sec-body {
+    border-top: 1px solid var(--border);
+    padding: 0 16px 8px;
+    display: none;
+  }
+  .sec-body.open { display: block; }
+
+  /* PRODUCT ROW */
+  .prow {
+    display: grid;
+    grid-template-columns: 1fr 72px;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #F2F2F2;
+  }
+  .prow:last-child { border-bottom: none; }
+  .pname { font-size: 13px; color: var(--text); font-weight: 500; }
+  .punit { font-size: 10px; color: var(--muted); margin-top: 1px; font-weight: 400; }
+  .qty {
+    font-family: 'Montserrat', sans-serif;
+    width: 72px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 7px 4px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #FAFAFA;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .qty:focus {
+    border-color: var(--red);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(204,0,0,0.06);
+  }
+  .qty:not(:placeholder-shown) {
+    border-color: var(--red);
+    background: #FFF5F5;
+  }
+
+  /* SUMMARY */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .sum-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .sum-lbl {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .sum-val {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 3px;
+  }
+  .sum-val.active { color: var(--red); }
+
+  /* SUBMIT */
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: scale(0.99); }
+
+  /* SUCCESS */
+  .success-view {
+    display: none;
+    text-align: center;
+    padding: 48px 24px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  .check-circle {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: #E8F5E9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 28px;
+    color: var(--green);
+    font-weight: 700;
+  }
+  .success-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .success-msg {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+  .new-order-btn {
+    margin-top: 24px;
+    padding: 10px 28px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text);
+    transition: border-color 0.15s;
+  }
+  .new-order-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">Заказы принимаются ежедневно</div>
+
+<div class="header">
+  <div class="logo-text">БУОНА</div>
+  <div class="logo-sub">КОММЕРЧЕСКИЙ ЗАКАЗ</div>
+  <div class="logo-tagline">Здоровый продукт – в каждую семью!</div>
+</div>
+
+<div class="main">
+
+  <div id="form-view">
+
+    <!-- CLIENT INFO -->
+    <div class="card">
+      <div class="card-title">Информация о клиенте</div>
+      <div class="grid2">
+        <div class="field">
+          <label>Организация *</label>
+          <input type="text" id="org" placeholder="Ресторан / Кафе / Магазин">
+        </div>
+        <div class="field">
+          <label>Контактное лицо *</label>
+          <input type="text" id="contact" placeholder="Имя">
+        </div>
+        <div class="field">
+          <label>Телефон *</label>
+          <input type="tel" id="phone" placeholder="+992 XX XXX XXXX">
+        </div>
+        <div class="field">
+          <label>Дата доставки *</label>
+          <input type="text" id="date" placeholder="дд.мм.гггг">
+        </div>
+        <div class="field full">
+          <label>Адрес доставки</label>
+          <input type="text" id="address" placeholder="Улица, ориентир">
+        </div>
+      </div>
+    </div>
+
+    <!-- BREAD -->
+    <div class="section">
+      <div class="sec-header" onclick="toggle('bread')">
+        <div class="sec-dot" style="background:var(--red)"></div>
+        <span class="sec-name">Хлебные изделия</span>
+        <span class="sec-badge" id="badge-bread">0 позиций</span>
+        <span class="chevron open" id="chev-bread">▼</span>
+      </div>
+      <div class="sec-body open" id="body-bread">
+        <div class="prow"><div><div class="pname">Альтамура (1кг)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Альтамура (1кг)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Багет (190гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Багет (190гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Батон молочный (250гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Батон молочный (250гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Батон с отрубями (350гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Батон с отрубями (350гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Булочки "Гамбургер" (90гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Булочки Гамбургер (90гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Булочки "Гамбургер" (125гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Булочки Гамбургер (125гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Булочки "Хотдог" (90гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Булочки Хотдог (90гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Булочки "Хотдог" (125гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Булочки Хотдог (125гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Каравай с кунжутом (250гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Каравай с кунжутом (250гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Хала (350гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Хала (350гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Халла (60гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Халла (60гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Хлеб Бородинский</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Хлеб Бородинский" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Хлеб бородинский (60гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Хлеб бородинский (60гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Хлеб артизанский (800гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Хлеб артизанский (800гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Хлеб с изюмом (400гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Хлеб с изюмом (400гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Хлеб формовой из 1с (350гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Хлеб формовой 1с (350гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Хлеб формовой с отрубями (60гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Хлеб формовой с отрубями (60гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Чиабатта (85гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="bread" data-n="Чиабатта (85гр)" data-u="шт" oninput="upd()"></div>
+      </div>
+    </div>
+
+    <!-- PASTRY -->
+    <div class="section">
+      <div class="sec-header" onclick="toggle('pastry')">
+        <div class="sec-dot" style="background:var(--gold)"></div>
+        <span class="sec-name">Кондитерские изделия</span>
+        <span class="sec-badge" id="badge-pastry">0 позиций</span>
+        <span class="chevron" id="chev-pastry">▼</span>
+      </div>
+      <div class="sec-body" id="body-pastry">
+        <div class="prow"><div><div class="pname">Булочка сдобная с изюмом (180гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Булочка с изюмом (180гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Булочка сдобная с орехами (180гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Булочка с орехами (180гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Булочка сдобная со сгущёнкой (180гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Булочка со сгущёнкой (180гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Булочка сдобная с творогом (200гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Булочка с творогом (200гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Кекс (30гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Кекс (30гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Круассан итальянский (75гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Круассан итальянский (75гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Круассан с джемом</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Круассан с джемом" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Лакомка (100гр)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Лакомка (100гр)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Пирог творожный (1кг)</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Пирог творожный (1кг)" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Сочники</div><div class="punit">шт</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Сочники" data-u="шт" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Заварные "Профитроли"</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Профитроли" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Венецианские пряники</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Венецианские пряники" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Пахлава</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Пахлава" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Печенье песочное с джемом</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Печенье с джемом" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Печенье с сухофруктами</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Печенье с сухофруктами" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Пряники</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Пряники" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Рогалики</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Рогалики" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Сухари</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Сухари" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Крекер</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Крекер" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Песочный с миндалём</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="pastry" data-n="Песочный с миндалём" data-u="кг" oninput="upd()"></div>
+      </div>
+    </div>
+
+    <!-- DAIRY -->
+    <div class="section">
+      <div class="sec-header" onclick="toggle('dairy')">
+        <div class="sec-dot" style="background:var(--blue)"></div>
+        <span class="sec-name">Молочные продукты</span>
+        <span class="sec-badge" id="badge-dairy">0 позиций</span>
+        <span class="chevron" id="chev-dairy">▼</span>
+      </div>
+      <div class="sec-body" id="body-dairy">
+        <div class="prow"><div><div class="pname">Молоко цельное (5.5%)</div><div class="punit">л</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Молоко цельное (5.5%)" data-u="л" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Молоко обезжиренное (2.5%)</div><div class="punit">л</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Молоко обезжиренное (2.5%)" data-u="л" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Катык</div><div class="punit">л</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Катык" data-u="л" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Каймак</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Каймак" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Кефир</div><div class="punit">л</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Кефир" data-u="л" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Курут</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Курут" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Творог</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Творог" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Чакка</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Чакка" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Сливочное масло</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Сливочное масло" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Сыр Primosale</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Сыр Primosale" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Сыр Feta</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Сыр Feta" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Сыр Mascarpone</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Сыр Mascarpone" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Сыр Ricotta</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Сыр Ricotta" data-u="кг" oninput="upd()"></div>
+        <div class="prow"><div><div class="pname">Сыр Gouda</div><div class="punit">кг</div></div><input type="number" class="qty" min="0" placeholder="0" data-s="dairy" data-n="Сыр Gouda" data-u="кг" oninput="upd()"></div>
+      </div>
+    </div>
+
+    <!-- JUICE PLACEHOLDER -->
+    <div class="section">
+      <div class="sec-header disabled">
+        <div class="sec-dot" style="background:var(--green)"></div>
+        <span class="sec-name">Соки, Варенье и Соусы</span>
+        <span class="sec-badge soon">В разработке</span>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="card">
+      <div class="field">
+        <label>Примечания к заказу</label>
+        <textarea id="notes" placeholder="Особые пожелания, время доставки, условия оплаты..."></textarea>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary">
+      <div class="sum-card">
+        <div class="sum-lbl">Всего</div>
+        <div class="sum-val active" id="sv-total">0</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-lbl">Хлеб</div>
+        <div class="sum-val" id="sv-bread">—</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-lbl">Кондит.</div>
+        <div class="sum-val" id="sv-pastry">—</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-lbl">Молоко</div>
+        <div class="sum-val" id="sv-dairy">—</div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="submitOrder()">ОТПРАВИТЬ ЗАКАЗ</button>
+
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-view" id="success-view">
+    <div class="check-circle">✓</div>
+    <div class="success-title">Заказ принят!</div>
+    <div class="success-msg" id="success-msg"></div>
+    <button class="new-order-btn" onclick="resetForm()">Оформить новый заказ</button>
+  </div>
+
+</div>
+
+<div class="footer">БУОНА &nbsp;·&nbsp; Продукция собственного производства</div>
+
+<script>
+const openSecs = {bread: true, pastry: false, dairy: false};
+
+function toggle(sec) {
+  openSecs[sec] = !openSecs[sec];
+  const body = document.getElementById('body-' + sec);
+  const chev = document.getElementById('chev-' + sec);
+  body.classList.toggle('open', openSecs[sec]);
+  chev.classList.toggle('open', openSecs[sec]);
+}
+
+function upd() {
+  let total = 0;
+  ['bread', 'pastry', 'dairy'].forEach(sec => {
+    const inputs = document.querySelectorAll(`input[data-s="${sec}"]`);
+    const cnt = [...inputs].filter(i => parseFloat(i.value) > 0).length;
+    const badge = document.getElementById('badge-' + sec);
+    const sv = document.getElementById('sv-' + sec);
+    badge.textContent = cnt + ' позиций';
+    badge.classList.toggle('has-items', cnt > 0);
+    sv.textContent = cnt > 0 ? cnt : '—';
+    sv.classList.toggle('active', cnt > 0);
+    total += cnt;
+  });
+  document.getElementById('sv-total').textContent = total;
+}
+
+function submitOrder() {
+  const org = document.getElementById('org').value.trim();
+  const contact = document.getElementById('contact').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const date = document.getElementById('date').value.trim();
+  if (!org || !contact || !phone || !date) {
+    alert('Пожалуйста, заполните все обязательные поля (*)');
+    return;
+  }
+  const hasItems = [...document.querySelectorAll('input[data-s]')].some(i => parseFloat(i.value) > 0);
+  if (!hasItems) {
+    alert('Добавьте хотя бы один продукт');
+    return;
+  }
+  document.getElementById('form-view').style.display = 'none';
+  document.getElementById('success-view').style.display = 'block';
+  document.getElementById('success-msg').textContent =
+    `Заказ от "${org}" на ${date} принят. Мы свяжемся с вами по номеру ${phone}.`;
+  window.scrollTo(0, 0);
+}
+
+function resetForm() {
+  document.getElementById('form-view').style.display = 'block';
+  document.getElementById('success-view').style.display = 'none';
+  document.querySelectorAll('input, textarea').forEach(i => i.value = '');
+  upd();
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
